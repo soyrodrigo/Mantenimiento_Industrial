@@ -16,6 +16,7 @@
             <li data-section="equipos"><i class="fa fa-cogs"></i> <span>Equipos</span></li>
             <li data-section="calendario"><i class="fa fa-calendar"></i> <span>Calendario</span></li>
             <li data-section="ot"><i class="fa fa-clipboard-list"></i> <span>Órdenes</span></li>
+            <li data-section="checklist"><i class="fa fa-tasks"></i> <span>Check List</span></li>
             <li data-section="kpis"><i class="fa fa-chart-pie"></i> <span>KPIs</span></li>
             <li data-section="busqueda"><i class="fa fa-search"></i> <span>Búsqueda</span></li>
             <li data-section="respaldos"><i class="fa fa-database"></i> <span>Respaldos</span></li>
@@ -32,29 +33,56 @@
         </section>
         <section id="equipos">
             <h1>Gestión de Equipos</h1>
-            <form id="equipo-form">
+            <form id="equipo-form" class="grid">
                 <input type="text" id="equipo-nombre" placeholder="Nombre del equipo" required>
-                <input type="text" id="equipo-descripcion" placeholder="Descripción" required>
-                <button type="submit">Registrar</button>
+                <input type="text" id="equipo-marca" placeholder="Marca" required>
+                <input type="text" id="equipo-modelo" placeholder="Modelo">
+                <input type="number" id="equipo-anio" placeholder="Año fabricación">
+                <input type="text" id="equipo-area" placeholder="Área de ubicación">
+                <input type="text" id="equipo-potencia" placeholder="Potencia/Capacidad">
+                <input type="text" id="equipo-tipo" placeholder="Tipo de equipo">
+                <textarea id="equipo-obs" placeholder="Observaciones"></textarea>
+                <button type="submit" class="full">Registrar</button>
             </form>
             <ul id="lista-equipos" class="lista"></ul>
         </section>
         <section id="calendario">
             <h1>Calendario de Mantenimiento</h1>
-            <form id="tarea-form">
+            <form id="tarea-form" class="grid">
+                <select id="tarea-equipo"></select>
                 <input type="date" id="tarea-fecha" required>
                 <input type="text" id="tarea-descripcion" placeholder="Descripción" required>
-                <button type="submit">Programar</button>
+                <select id="tarea-frecuencia">
+                    <option value="Diario">Diaria</option>
+                    <option value="Semanal">Semanal</option>
+                    <option value="Mensual">Mensual</option>
+                    <option value="Trimestral">Trimestral</option>
+                    <option value="Semestral">Semestral</option>
+                    <option value="Anual">Anual</option>
+                </select>
+                <button type="submit" class="full">Programar</button>
             </form>
             <ul id="lista-tareas" class="lista"></ul>
         </section>
         <section id="ot">
             <h1>Órdenes de Trabajo</h1>
-            <form id="ot-form">
+            <form id="ot-form" class="grid">
+                <select id="ot-equipo"></select>
+                <input type="text" id="ot-persona" placeholder="Persona asignada" required>
+                <input type="date" id="ot-fecha" required>
                 <input type="text" id="ot-descripcion" placeholder="Descripción" required>
-                <button type="submit">Agregar</button>
+                <button type="submit" class="full">Agregar</button>
             </form>
             <ul id="lista-ot" class="lista"></ul>
+        </section>
+        <section id="checklist">
+            <h1>Check List</h1>
+            <select id="cl-equipo"></select>
+            <form id="cl-form" class="grid">
+                <input type="text" id="cl-parte" placeholder="Parte a revisar" required>
+                <button type="submit">Agregar</button>
+            </form>
+            <ul id="cl-lista" class="lista"></ul>
         </section>
         <section id="kpis">
             <h1>KPIs de Mantenimiento</h1>

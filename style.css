@@ -19,6 +19,7 @@ body {
     height: 100vh;
     padding-top: 1rem;
     transition: transform 0.3s ease;
+    z-index: 100;
 }
 .sidebar .logo {
     text-align: center;
@@ -52,14 +53,25 @@ form {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
-form input, form button {
+form.grid input,
+form.grid select,
+form.grid textarea {
+    flex: 1 1 180px;
+}
+form input,
+form select,
+form textarea,
+form button {
     padding: 0.5rem;
-    margin-right: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1rem;
 }
+form textarea { min-height: 60px; resize: vertical; }
 form button {
     background: var(--primary-color);
     color: #fff;
@@ -67,6 +79,7 @@ form button {
     cursor: pointer;
     transition: background 0.3s;
 }
+form button.full { flex: 1 1 100%; }
 form button:hover {
     background: #1e73be;
 }
@@ -96,7 +109,7 @@ form button:hover {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 @media (max-width: 768px) {
-    .sidebar { transform: translateX(-100%); position: fixed; z-index: 100; }
+    .sidebar { transform: translateX(-100%); position: fixed; }
     .sidebar.show { transform: translateX(0); }
     .content { margin-left: 0; padding-top: 3rem; }
     .mobile-toggle {
