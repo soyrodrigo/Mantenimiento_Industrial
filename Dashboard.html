@@ -1,0 +1,3306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Mantenimiento</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary-color: #10b981;
+      --accent-color: #f59e0b;
+      --danger-color: #ef4444;
+      --warning-color: #f97316;
+      --info-color: #06b6d4;
+      --success-color: #22c55e;
+      
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-dark: #1e293b;
+      --bg-darker: #0f172a;
+      
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-light: #94a3b8;
+      --text-white: #ffffff;
+      
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+      
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, #e2e8f0 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+      background: var(--bg-primary);
+    }
+
+    /* Sidebar mejorado */
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+      color: var(--text-white);
+      padding: 0;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    }
+
+    .sidebar-header {
+      padding: 2rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      opacity: 0.8;
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      margin: 0.25rem 1rem;
+      cursor: pointer;
+      padding: 0.875rem 1rem;
+      border-radius: var(--radius-lg);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar ul li::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .sidebar ul li:hover::before {
+      left: 100%;
+    }
+
+    .sidebar ul li:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .sidebar ul li.active {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      box-shadow: var(--shadow-lg);
+    }
+
+    .sidebar ul li i {
+      width: 1.25rem;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    /* Main content mejorado */
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      background: var(--bg-primary);
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .main-content::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .seccion {
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .seccion.activa {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Headers mejorados */
+    .page-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    .page-header h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-header h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .page-header h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 60%;
+      background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+
+    /* Inputs y formularios mejorados */
+    .form-container {
+      background: var(--bg-secondary);
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-field {
+      position: relative;
+    }
+
+    .form-field label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"], 
+    input[type="number"], 
+    input[type="date"], 
+    input[type="time"], 
+    input[type="datetime-local"], 
+    select, 
+    textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      transform: translateY(-1px);
+    }
+
+    input:hover, select:hover, textarea:hover {
+      border-color: var(--primary-color);
+    }
+
+    /* Botones mejorados */
+    button {
+      padding: 0.875rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: var(--text-white);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s;
+    }
+
+    button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color), #16a34a);
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning-color), #ea580c);
+    }
+
+    .btn-info {
+      background: linear-gradient(135deg, var(--info-color), #0891b2);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger-color), #dc2626);
+    }
+
+    /* Cards de equipos mejoradas */
+    .equipo-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2rem;
+      padding: 0;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .equipo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .equipo-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: var(--text-white);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .equipo-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), transparent);
+    }
+
+    .equipo-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .equipo-codigo {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text-white);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: 1px;
+      backdrop-filter: blur(10px);
+    }
+
+    .equipo-info {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .info-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .info-field label {
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-field span {
+      background: var(--bg-primary);
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      font-weight: 500;
+      min-height: 2.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    /* KPI Cards mejorados */
+    .kpi-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      padding: 2rem;
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .kpi-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .kpi-mttr {
+      background: linear-gradient(135deg, var(--danger-color), #dc2626) !important;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .kpi-disponibilidad {
+      background: linear-gradient(135deg, var(--success-color), #16a34a) !important;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .kpi-criticidad {
+      background: linear-gradient(135deg, var(--warning-color), #ea580c) !important;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .kpi-description {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 0.875rem;
+    }
+
+    /* Tablas mejoradas */
+    .data-table, #tabla-calendario {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+    }
+
+    .data-table th, #tabla-calendario th {
+      background: linear-gradient(135deg, var(--bg-darker), var(--bg-dark));
+      color: var(--text-white);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table td, #tabla-calendario td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-light);
+      transition: background-color 0.2s;
+    }
+
+    .data-table tr:hover, #tabla-calendario tr:hover {
+      background: var(--bg-primary);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Calendario mejorado */
+    .calendario-container {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      margin-top: 2rem;
+    }
+
+    .activa-calendario {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+      color: var(--text-white) !important;
+      font-weight: 700 !important;
+      position: relative;
+    }
+
+    .activa-calendario::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 8px;
+      height: 8px;
+      background: var(--success-color);
+      border-radius: 50%;
+      border: 2px solid var(--text-white);
+    }
+
+    /* Órdenes de trabajo mejoradas */
+    .ot-container {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ot-container:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .ot-header {
+      background: linear-gradient(135deg, var(--bg-darker), var(--bg-dark));
+      color: var(--text-white);
+      padding: 1.5rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .ot-numero {
+      background: linear-gradient(135deg, var(--danger-color), #dc2626);
+      color: var(--text-white);
+      padding: 1rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .ot-form {
+      padding: 2rem;
+    }
+
+    .ot-section {
+      background: linear-gradient(135deg, var(--bg-primary), var(--border-light));
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      text-align: center;
+      color: var(--text-primary);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .ot-actions {
+      padding: 1.5rem;
+      text-align: center;
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    /* Estados mejorados */
+    .estado-abierta, .estado-completada, .estado-en-proceso {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .estado-abierta {
+      background: linear-gradient(135deg, var(--warning-color), #ea580c);
+      color: var(--text-white);
+    }
+
+    .estado-completada {
+      background: linear-gradient(135deg, var(--success-color), #16a34a);
+      color: var(--text-white);
+    }
+
+    .estado-en-proceso {
+      background: linear-gradient(135deg, var(--info-color), #0891b2);
+      color: var(--text-white);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 240px;
+      }
+      
+      .main-content {
+        padding: 1.5rem;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .kpi-container {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        position: relative;
+        box-shadow: none;
+      }
+      
+      .sidebar-header {
+        padding: 1.5rem;
+      }
+      
+      .sidebar ul {
+        display: flex;
+        overflow-x: auto;
+        padding: 1rem;
+        gap: 0.5rem;
+      }
+      
+      .sidebar ul li {
+        white-space: nowrap;
+        min-width: auto;
+        margin: 0;
+      }
+      
+      .main-content {
+        padding: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 1.75rem;
+      }
+      
+      .kpi-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .kpi-card {
+        padding: 1.5rem;
+      }
+      
+      .equipo-info {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+      }
+      
+      .ot-actions {
+        flex-direction: column;
+      }
+      
+      .ot-actions button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .sidebar-header h2 {
+        font-size: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .kpi-value {
+        font-size: 2rem;
+      }
+      
+      .form-container {
+        padding: 1.5rem;
+      }
+      
+      .equipo-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+
+    /* Scrollbar personalizado */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--primary-color), var(--primary-dark));
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Animaciones adicionales */
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .loading {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .slide-in {
+      animation: slideInRight 0.5s ease-out;
+    }
+
+    /* Dark mode toggle (futuro) */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1.25rem;
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2><i class="fas fa-cogs"></i> Sistema de Mantenimiento</h2>
+        <div class="sidebar-subtitle">Industrial Dashboard</div>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li onclick="mostrarSeccion('inicio')" class="active">
+            <i class="fas fa-home"></i> <span>Inicio</span>
+          </li>
+          <li onclick="mostrarSeccion('equipos')">
+            <i class="fas fa-cog"></i> <span>Equipos</span>
+          </li>
+          <li onclick="mostrarSeccion('calendario')">
+            <i class="fas fa-calendar-alt"></i> <span>Calendario</span>
+          </li>
+          <li onclick="mostrarSeccion('ots')">
+            <i class="fas fa-clipboard-list"></i> <span>Órdenes de Trabajo</span>
+          </li>
+          <li onclick="mostrarSeccion('kpis')">
+            <i class="fas fa-chart-line"></i> <span>Indicadores / KPIs</span>
+          </li>
+          <li onclick="mostrarSeccion('checklist')">
+            <i class="fas fa-tasks"></i> <span>Checklist</span>
+          </li>
+          <li onclick="mostrarSeccion('buscar')">
+            <i class="fas fa-search"></i> <span>Buscar Equipo</span>
+          </li>
+          <li onclick="mostrarSeccion('respaldos')">
+            <i class="fas fa-database"></i> <span>Respaldos</span>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="content-wrapper">
+        <section id="inicio" class="seccion activa">
+          <div class="page-header">
+            <h1><i class="fas fa-tachometer-alt"></i> Dashboard Principal</h1>
+          </div>
+          
+          <div id="resumen-dashboard">
+            <div class="kpi-container">
+              <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-cogs"></i> Total de Equipos</div>
+                <div class="kpi-value" id="total-equipos">0</div>
+                <div class="kpi-description">Equipos registrados en el sistema</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-exclamation-triangle"></i> OT Abiertas</div>
+                <div class="kpi-value kpi-mttr" id="ot-abiertas">0</div>
+                <div class="kpi-description">Órdenes de trabajo pendientes</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-check-circle"></i> OT Completadas</div>
+                <div class="kpi-value kpi-disponibilidad" id="ot-completadas">0</div>
+                <div class="kpi-description">Completadas este mes</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-calendar-check"></i> Tareas Programadas</div>
+                <div class="kpi-value kpi-criticidad" id="tareas-programadas">0</div>
+                <div class="kpi-description">En calendario de mantenimiento</div>
+              </div>
+            </div>
+            
+            <h2><i class="fas fa-exclamation-circle"></i> Equipos Críticos</h2>
+            <div id="equipos-criticos">
+              <p>No hay equipos con criticidad alta registrados.</p>
+            </div>
+            
+            <h2><i class="fas fa-clock"></i> Próximas Tareas de Mantenimiento</h2>
+            <div id="proximas-tareas">
+              <p>No hay tareas programadas próximamente.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="equipos" class="seccion">
+          <div class="page-header">
+            <h1><i class="fas fa-cogs"></i> Gestión de Equipos</h1>
+          </div>
+          
+          <div class="form-container">
+            <h2><i class="fas fa-plus-circle"></i> Registrar Nuevo Equipo</h2>
+            <form id="formulario-equipo">
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-tag"></i> Nombre del Equipo:</label>
+                  <input type="text" id="nombre-equipo" required placeholder="Ej: Bomba Centrífuga Principal">
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-layer-group"></i> Tipo de Equipo:</label>
+                  <select id="tipo-equipo" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="BOMBA">Bomba</option>
+                    <option value="MOTOR">Motor</option>
+                    <option value="COMPRESOR">Compresor</option>
+                    <option value="GENERADOR">Generador</option>
+                    <option value="TRANSFORMADOR">Transformador</option>
+                    <option value="TABLERO">Tablero Eléctrico</option>
+                    <option value="VALVULA">Válvula</option>
+                    <option value="INTERCAMBIADOR">Intercambiador de Calor</option>
+                    <option value="OTRO">Otro</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-industry"></i> Marca:</label>
+                  <input type="text" id="marca-equipo" required placeholder="Ej: Grundfos">
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-barcode"></i> Modelo:</label>
+                  <input type="text" id="modelo-equipo" placeholder="Ej: CR 32-4">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-hashtag"></i> Número de Serie:</label>
+                  <input type="text" id="serie-equipo" placeholder="Ej: 12345678">
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-calendar"></i> Año de Fabricación:</label>
+                  <input type="number" id="año-equipo" min="1900" max="2030" placeholder="2020">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-map-marker-alt"></i> Área/Ubicación:</label>
+                  <input type="text" id="area-equipo" required placeholder="Ej: Sala de Bombas">
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-exclamation-triangle"></i> Criticidad:</label>
+                  <select id="criticidad-equipo" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="ALTA">Alta</option>
+                    <option value="MEDIA">Media</option>
+                    <option value="BAJA">Baja</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-bolt"></i> Potencia/Capacidad:</label>
+                  <input type="text" id="potencia-equipo" placeholder="Ej: 15 HP, 100 m³/h">
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-power-off"></i> Estado Actual:</label>
+                  <select id="estado-equipo" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="OPERATIVO">Operativo</option>
+                    <option value="MANTENIMIENTO">En Mantenimiento</option>
+                    <option value="FUERA_SERVICIO">Fuera de Servicio</option>
+                    <option value="STANDBY">Standby</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-comment"></i> Observaciones:</label>
+                  <textarea id="observaciones-equipo" placeholder="Información adicional del equipo..."></textarea>
+                </div>
+              </div>
+              
+              <button type="submit">
+                <i class="fas fa-plus"></i> Registrar Equipo
+              </button>
+            </form>
+          </div>
+          
+          <h2><i class="fas fa-list"></i> Equipos Registrados</h2>
+          <div id="lista-equipos">
+            <p>No hay equipos registrados. Agrega el primer equipo usando el formulario anterior.</p>
+          </div>
+        </section>
+
+        <section id="calendario" class="seccion">
+          <div class="page-header">
+            <h1><i class="fas fa-calendar-alt"></i> Calendario de Mantenimiento</h1>
+          </div>
+          
+          <div class="form-container">
+            <h2><i class="fas fa-calendar-plus"></i> Programar Tarea de Mantenimiento</h2>
+            <form id="formulario-tarea">
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-cog"></i> Equipo:</label>
+                  <select id="equipo-select" required>
+                    <option value="">Seleccionar equipo...</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-tasks"></i> Tarea:</label>
+                  <input type="text" id="tarea" required placeholder="Descripción de la tarea">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-sync"></i> Frecuencia:</label>
+                  <select id="frecuencia" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="D">Diaria</option>
+                    <option value="S">Semanal</option>
+                    <option value="M">Mensual</option>
+                    <option value="T">Trimestral</option>
+                    <option value="SE">Semestral</option>
+                    <option value="A">Anual</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-wrench"></i> Tipo de Mantenimiento:</label>
+                  <select id="tipo-mantenimiento">
+                    <option value="PREVENTIVO">Preventivo</option>
+                    <option value="PREDICTIVO">Predictivo</option>
+                    <option value="CORRECTIVO">Correctivo</option>
+                  </select>
+                </div>
+              </div>
+              
+              <button type="submit">
+                <i class="fas fa-calendar-plus"></i> Programar Tarea
+              </button>
+            </form>
+          </div>
+
+          <div class="calendario-container">
+            <table id="tabla-calendario">
+              <thead id="thead-calendario"></thead>
+              <tbody id="tbody-calendario"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="ots" class="seccion">
+          <div class="page-header">
+            <h1><i class="fas fa-clipboard-list"></i> Órdenes de Trabajo</h1>
+          </div>
+          <div id="contenedor-ots"></div>
+        </section>
+
+        <section id="kpis" class="seccion">
+          <div class="page-header">
+            <h1><i class="fas fa-chart-line"></i> Indicadores de Mantenimiento (KPIs)</h1>
+          </div>
+          
+          <div class="form-container">
+            <h2><i class="fas fa-filter"></i> Filtros</h2>
+            <div class="form-row">
+              <div class="form-field">
+                <label><i class="fas fa-cog"></i> Equipo:</label>
+                <select id="filtro-equipo-kpi">
+                  <option value="">Todos los equipos</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label><i class="fas fa-calendar-alt"></i> Período:</label>
+                <select id="filtro-periodo">
+                  <option value="30">Últimos 30 días</option>
+                  <option value="90">Últimos 90 días</option>
+                  <option value="365">Último año</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <button onclick="actualizarKPIs()">
+                  <i class="fas fa-sync-alt"></i> Actualizar KPIs
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="kpi-container" id="kpis-detallados">
+            <div class="kpi-card">
+              <div class="kpi-title"><i class="fas fa-clock"></i> MTTR (Tiempo Medio de Reparación)</div>
+              <div class="kpi-value kpi-mttr" id="mttr-value">0h</div>
+              <div class="kpi-description">Promedio de tiempo para completar OT</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title"><i class="fas fa-chart-pie"></i> Disponibilidad</div>
+              <div class="kpi-value kpi-disponibilidad" id="disponibilidad-value">0%</div>
+              <div class="kpi-description">Tiempo operativo vs tiempo total</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title"><i class="fas fa-exclamation-triangle"></i> Índice de Criticidad</div>
+              <div class="kpi-value kpi-criticidad" id="criticidad-value">0</div>
+              <div class="kpi-description">Basado en frecuencia de fallas</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title"><i class="fas fa-tachometer-alt"></i> Eficiencia de Mantenimiento</div>
+              <div class="kpi-value" id="eficiencia-value">0%</div>
+              <div class="kpi-description">OT preventivas vs correctivas</div>
+            </div>
+          </div>
+          
+          <h2><i class="fas fa-analytics"></i> Análisis por Equipo</h2>
+          <table class="data-table" id="tabla-kpis-equipos">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Equipo</th>
+                <th>MTTR (horas)</th>
+                <th>Disponibilidad (%)</th>
+                <th>OT Completadas</th>
+                <th>Criticidad</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-kpis-equipos">
+              <tr>
+                <td colspan="6" style="text-align: center; color: #7f8c8d;">No hay datos suficientes para mostrar KPIs</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="checklist" class="seccion">
+          <div class="page-header">
+            <h1><i class="fas fa-tasks"></i> Gestión de Checklist</h1>
+          </div>
+          
+          <div class="form-container">
+            <h2><i class="fas fa-plus-circle"></i> Agregar Nueva Tarea de Checklist</h2>
+            <form id="formulario-checklist">
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-cog"></i> Equipo:</label>
+                  <select id="checklist-equipo-select" required>
+                    <option value="">Seleccionar equipo...</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-tasks"></i> Descripción de la Tarea:</label>
+                  <input type="text" id="checklist-tarea" required placeholder="Ej: Verificar nivel de aceite">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-list"></i> Tipo de Verificación:</label>
+                  <select id="checklist-tipo" required>
+                    <option value="">Seleccionar tipo...</option>
+                    <option value="visual">Inspección Visual</option>
+                    <option value="medicion">Medición/Lectura</option>
+                    <option value="funcionamiento">Prueba de Funcionamiento</option>
+                    <option value="limpieza">Limpieza</option>
+                    <option value="lubricacion">Lubricación</option>
+                    <option value="ajuste">Ajuste/Calibración</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-exclamation-triangle"></i> Prioridad:</label>
+                  <select id="checklist-prioridad" required>
+                    <option value="baja">Baja</option>
+                    <option value="media" selected>Media</option>
+                    <option value="alta">Alta</option>
+                    <option value="critica">Crítica</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-clock"></i> Tiempo Estimado (minutos):</label>
+                  <input type="number" id="checklist-tiempo" min="1" max="480" value="5" required>
+                </div>
+                <div class="form-field">
+                  <label><i class="fas fa-user"></i> Responsable:</label>
+                  <input type="text" id="checklist-responsable" placeholder="Operador, Técnico, etc.">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-field">
+                  <label><i class="fas fa-comment"></i> Observaciones:</label>
+                  <textarea id="checklist-observaciones" placeholder="Instrucciones adicionales, valores esperados, etc." rows="3"></textarea>
+                </div>
+              </div>
+              
+              <button type="submit">
+                <i class="fas fa-plus"></i> Agregar Tarea al Checklist
+              </button>
+            </form>
+          </div>
+          
+          <h2><i class="fas fa-clipboard-check"></i> Checklist Diario</h2>
+          <div class="form-container">
+            <div class="form-row">
+              <div class="form-field">
+                <label><i class="fas fa-calendar"></i> Fecha:</label>
+                <input type="date" id="fecha-checklist" value="">
+              </div>
+              <div class="form-field">
+                <label><i class="fas fa-filter"></i> Filtrar por Equipo:</label>
+                <select id="filtro-checklist-equipo">
+                  <option value="">Todos los equipos</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <button onclick="actualizarChecklistDiario()">
+                  <i class="fas fa-sync-alt"></i> Actualizar Vista
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div id="contenedor-checklist-diario"></div>
+          
+          <h2><i class="fas fa-list"></i> Tareas de Checklist Configuradas</h2>
+          <div id="lista-tareas-checklist">
+            <p>No hay tareas de checklist configuradas.</p>
+          </div>
+          
+          <h2><i class="fas fa-history"></i> Historial de Ejecuciones</h2>
+          <div class="form-container">
+            <div class="form-row">
+              <div class="form-field">
+                <label><i class="fas fa-calendar-week"></i> Período:</label>
+                <select id="periodo-historial">
+                  <option value="7">Últimos 7 días</option>
+                  <option value="30">Últimos 30 días</option>
+                  <option value="90">Últimos 90 días</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <button onclick="actualizarHistorialChecklist()">
+                  <i class="fas fa-search"></i> Ver Historial
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="historial-checklist-tabla"></div>
+        </section>
+
+        <section id="buscar" class="seccion">
+          <div class="page-header">
+            <h1><i class="fas fa-search"></i> Buscar Equipo</h1>
+          </div>
+          <div class="form-container">
+            <div class="form-row">
+              <div class="form-field">
+                <label><i class="fas fa-search"></i> Término de Búsqueda:</label>
+                <input type="text" id="buscador-equipo" placeholder="Código o nombre del equipo">
+              </div>
+              <div class="form-field">
+                <button onclick="buscarEquipo()">
+                  <i class="fas fa-search"></i> Buscar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="detalle-equipo"></div>
+        </section>
+
+        <section id="respaldos" class="seccion">
+          <h1>Base de Datos y Respaldos</h1>
+          <div class="form-container">
+            <button onclick="crearBackup()">💾 Crear Backup Manual</button>
+            <button onclick="importarBackup()">📁 Importar Backup</button>
+            <input type="file" id="file-backup" accept=".json" style="display: none;" onchange="procesarBackup(this)">
+          </div>
+          
+          <!-- NUEVA SECCIÓN DE INTEGRACIÓN CON TELEGRAM BOT -->
+          <div class="form-container">
+            <h2>🤖 Integración Bot de Telegram</h2>
+            <button id="btn-bot-toggle" onclick="toggleTelegramBot()">
+              <span id="bot-toggle-text">🚀 Iniciar Bot</span>
+            </button>
+            <button onclick="syncToTelegram()">🔄 Sincronizar con Telegram</button>
+            <button onclick="downloadTelegramExcel()">📥 Descargar Excel Bot</button>
+            
+            <div id="bot-status" style="margin-top: 1rem; padding: 1rem; background: #f0f0f0; border-radius: 8px;">
+              <h3>📊 Estado del Bot</h3>
+              <div id="bot-status-content">
+                <p>Verificando estado del bot...</p>
+              </div>
+            </div>
+            
+            <div id="telegram-stats" style="margin-top: 1rem; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
+              <h3>📈 Estadísticas del Bot Telegram</h3>
+              <div id="telegram-stats-content">
+                <p>Cargando estadísticas...</p>
+              </div>
+            </div>
+          </div>
+          
+          <div id="historial-backup">
+            <h2>Información del Sistema</h2>
+            <p>Los datos se guardan automáticamente en el navegador (localStorage).</p>
+            <p>Se recomienda crear backups periódicos para evitar pérdida de información.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Variables globales
+    const EQUIPOS_KEY = "equipos_mantenimiento";
+    const TAREAS_KEY = "tareas_mantenimiento";
+    const OT_KEY = "ordenes_trabajo";
+    
+    let equipos = [];
+    let tareas = [];
+    let ordenesTrabajo = [];
+    let equipoCounter = parseInt(localStorage.getItem('equipo_counter') || '1');
+    let ordenesTrabajoCounter = parseInt(localStorage.getItem('ot_counter') || '1');
+
+    // Función principal de navegación
+    function mostrarSeccion(seccionId) {
+      // Ocultar todas las secciones
+      document.querySelectorAll('.seccion').forEach(sec => {
+        sec.classList.remove('activa');
+      });
+      
+      // Mostrar la sección seleccionada
+      const seccionActiva = document.getElementById(seccionId);
+      if (seccionActiva) {
+        seccionActiva.classList.add('activa');
+      }
+      
+      // Actualizar navegación activa
+      document.querySelectorAll('.sidebar ul li').forEach(li => {
+        li.classList.remove('active');
+      });
+      
+      // Marcar el elemento activo
+      event.currentTarget.classList.add('active');
+      
+      // Cargar datos específicos de la sección
+      switch(seccionId) {
+        case 'inicio':
+          actualizarResumen();
+          break;
+        case 'equipos':
+          mostrarEquipos();
+          break;
+        case 'calendario':
+          actualizarSelectEquipos();
+          actualizarTablaCalendario();
+          break;
+        case 'ots':
+          mostrarOrdenesTrabajo();
+          break;
+        case 'kpis':
+          actualizarKPIs();
+          break;
+        case 'checklist':
+          actualizarSelectsChecklist();
+          mostrarTareasChecklist();
+          // Establecer fecha actual por defecto
+          document.getElementById('fecha-checklist').value = new Date().toISOString().split('T')[0];
+          actualizarChecklistDiario();
+          actualizarHistorialChecklist();
+          break;
+        case 'buscar':
+          // Limpiar búsqueda anterior
+          document.getElementById('buscador-equipo').value = '';
+          document.getElementById('detalle-equipo').innerHTML = '';
+          break;
+        case 'respaldos':
+          actualizarInfoBackup();
+          break;
+      }
+    }
+
+    // Funciones de persistencia
+    function guardarEquipos() {
+      localStorage.setItem(EQUIPOS_KEY, JSON.stringify(equipos));
+      localStorage.setItem('equipo_counter', equipoCounter.toString());
+    }
+
+    function cargarEquipos() {
+      const data = localStorage.getItem(EQUIPOS_KEY);
+      if (data) equipos = JSON.parse(data);
+    }
+
+    function guardarTareas() {
+      localStorage.setItem(TAREAS_KEY, JSON.stringify(tareas));
+    }
+
+    function cargarTareas() {
+      const data = localStorage.getItem(TAREAS_KEY);
+      if (data) tareas = JSON.parse(data);
+    }
+
+    function guardarOrdenesTrabajo() {
+      localStorage.setItem(OT_KEY, JSON.stringify(ordenesTrabajo));
+      localStorage.setItem('ot_counter', ordenesTrabajoCounter.toString());
+    }
+
+    function cargarOrdenesTrabajo() {
+      const data = localStorage.getItem(OT_KEY);
+      if (data) ordenesTrabajo = JSON.parse(data);
+    }
+
+    // Función para generar código de equipo
+    function generarCodigoEquipo(tipo, nombre) {
+      const prefijos = {
+        'BOMBA': 'BM',
+        'MOTOR': 'MT',
+        'COMPRESOR': 'CP',
+        'GENERADOR': 'GN',
+        'TRANSFORMADOR': 'TR',
+        'TABLERO': 'TB',
+        'VALVULA': 'VL',
+        'INTERCAMBIADOR': 'IC',
+        'OTRO': 'EQ'
+      };
+      
+      const prefijo = prefijos[tipo] || 'EQ';
+      const numero = equipoCounter.toString().padStart(3, '0');
+      return `${prefijo}-${numero}`;
+    }
+
+    // Funciones para equipos
+    function mostrarEquipos() {
+      const container = document.getElementById('lista-equipos');
+      
+      if (equipos.length === 0) {
+        container.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> No hay equipos registrados. Agrega el primer equipo usando el formulario anterior.</p></div>';
+        return;
+      }
+      
+      container.innerHTML = '';
+      equipos.forEach((equipo, index) => {
+        const equipoDiv = document.createElement('div');
+        equipoDiv.className = 'equipo-card';
+        equipoDiv.innerHTML = `
+          <div class="equipo-header">
+            <h3><i class="fas fa-cog"></i> ${equipo.nombre}</h3>
+            <div class="equipo-codigo">${equipo.codigo}</div>
+          </div>
+          <div class="equipo-info">
+            <div class="info-field">
+              <label><i class="fas fa-layer-group"></i> Tipo:</label>
+              <span>${equipo.tipo}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-industry"></i> Marca:</label>
+              <span>${equipo.marca}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-barcode"></i> Modelo:</label>
+              <span>${equipo.modelo || 'N/A'}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-hashtag"></i> Serie:</label>
+              <span>${equipo.serie || 'N/A'}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-calendar"></i> Año:</label>
+              <span>${equipo.año || 'N/A'}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-map-marker-alt"></i> Área:</label>
+              <span>${equipo.area}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-exclamation-triangle"></i> Criticidad:</label>
+              <span style="background-color: ${equipo.criticidad === 'ALTA' ? '#ef4444' : equipo.criticidad === 'MEDIA' ? '#f97316' : '#22c55e'}; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${equipo.criticidad}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-power-off"></i> Estado:</label>
+              <span>${equipo.estado}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-bolt"></i> Potencia:</label>
+              <span>${equipo.potencia || 'N/A'}</span>
+            </div>
+            <div class="info-field" style="grid-column: 1 / -1;">
+              <label><i class="fas fa-comment"></i> Observaciones:</label>
+              <span>${equipo.observaciones || 'Sin observaciones'}</span>
+            </div>
+          </div>
+          <div style="margin-top: 1.5rem; padding: 0 2rem 2rem; text-align: right;">
+            <button onclick="editarEquipo(${index})" class="btn-warning">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+            <button onclick="eliminarEquipo(${index})" class="btn-danger">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </div>
+        `;
+        container.appendChild(equipoDiv);
+      });
+    }
+
+    function actualizarSelectEquipos() {
+      const selects = ['equipo-select', 'filtro-equipo-kpi'];
+      
+      selects.forEach(selectId => {
+        const select = document.getElementById(selectId);
+        if (select) {
+          // Guardar opción seleccionada
+          const valorSeleccionado = select.value;
+          
+          // Limpiar opciones excepto la primera
+          while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+          }
+          
+          // Agregar equipos
+          equipos.forEach(equipo => {
+            const option = document.createElement('option');
+            option.value = equipo.codigo;
+            option.textContent = `${equipo.codigo} - ${equipo.nombre}`;
+            select.appendChild(option);
+          });
+          
+          // Restaurar selección si existe
+          if (valorSeleccionado) {
+            select.value = valorSeleccionado;
+          }
+        }
+      });
+    }
+
+    function editarEquipo(index) {
+      const equipo = equipos[index];
+      
+      // Llenar formulario con datos del equipo
+      document.getElementById('nombre-equipo').value = equipo.nombre;
+      document.getElementById('tipo-equipo').value = equipo.tipo;
+      document.getElementById('marca-equipo').value = equipo.marca;
+      document.getElementById('modelo-equipo').value = equipo.modelo || '';
+      document.getElementById('serie-equipo').value = equipo.serie || '';
+      document.getElementById('año-equipo').value = equipo.año || '';
+      document.getElementById('area-equipo').value = equipo.area;
+      document.getElementById('criticidad-equipo').value = equipo.criticidad;
+      document.getElementById('potencia-equipo').value = equipo.potencia || '';
+      document.getElementById('estado-equipo').value = equipo.estado;
+      document.getElementById('observaciones-equipo').value = equipo.observaciones || '';
+      
+      // Eliminar equipo de la lista (se volverá a agregar al enviar el formulario)
+      equipos.splice(index, 1);
+      guardarEquipos();
+      mostrarEquipos();
+      actualizarSelectEquipos();
+      
+      // Cambiar a la sección de equipos
+      mostrarSeccion('equipos');
+      
+      alert('Equipo cargado en el formulario para edición');
+    }
+
+    function eliminarEquipo(index) {
+      if (confirm('¿Está seguro de eliminar este equipo? También se eliminarán todas las tareas y OT asociadas.')) {
+        const equipoEliminado = equipos[index];
+        
+        // Eliminar equipo
+        equipos.splice(index, 1);
+        
+        // Eliminar tareas asociadas
+        tareas = tareas.filter(tarea => tarea.equipoCodigo !== equipoEliminado.codigo);
+        
+        // Eliminar OT asociadas
+        ordenesTrabajo = ordenesTrabajo.filter(ot => ot.codigoEquipo !== equipoEliminado.codigo);
+        
+        // Guardar cambios
+        guardarEquipos();
+        guardarTareas();
+        guardarOrdenesTrabajo();
+        
+        // Actualizar vistas
+        mostrarEquipos();
+        actualizarSelectEquipos();
+        actualizarTablaCalendario();
+        mostrarOrdenesTrabajo();
+        actualizarResumen();
+        
+        alert('Equipo eliminado exitosamente');
+      }
+    }
+
+    // Funciones del calendario
+    function semanasPorFrecuencia(frecuencia) {
+      switch(frecuencia) {
+        case "D": return Array.from({length: 48}, (_, i) => i + 1);
+        case "S": return Array.from({length: 48}, (_, i) => i + 1);
+        case "M": return [2,6,10,14,18,22,26,30,34,38,42,46];
+        case "T": return [12,24,36,48];
+        case "SE": return [13,39];
+        case "A": return [27];
+        default: return [];
+      }
+    }
+
+    function actualizarTablaCalendario() {
+      const thead = document.getElementById("thead-calendario");
+      const tbody = document.getElementById("tbody-calendario");
+
+      // Crear encabezados
+      const filaMeses = document.createElement("tr");
+      const filaSemanas = document.createElement("tr");
+      filaMeses.innerHTML = `<th rowspan="2">Código</th><th rowspan="2">Equipo</th><th rowspan="2">Tarea</th><th rowspan="2">Acciones</th>`;
+
+      const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      for (let i = 0; i < 12; i++) {
+        filaMeses.innerHTML += `<th colspan="4">${meses[i]}</th>`;
+        for (let j = 1; j <= 4; j++) {
+          filaSemanas.innerHTML += `<th>S${j}</th>`;
+        }
+      }
+
+      thead.innerHTML = '';
+      thead.appendChild(filaMeses);
+      thead.appendChild(filaSemanas);
+
+      // Crear filas de tareas
+      tbody.innerHTML = '';
+      tareas.forEach((item, index) => {
+        const equipo = equipos.find(e => e.codigo === item.equipoCodigo);
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td style="font-weight: bold;">${item.equipoCodigo}</td>
+          <td style="font-weight: bold;">${equipo ? equipo.nombre : 'Equipo no encontrado'}</td>
+          <td>${item.tarea}</td>
+          <td class="acciones">
+            <button onclick="editarTarea(${index})" title="Editar" class="btn-warning" style="padding: 0.5rem; margin: 0.25rem;">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="eliminarTarea(${index})" title="Eliminar" class="btn-danger" style="padding: 0.5rem; margin: 0.25rem;">
+              <i class="fas fa-trash"></i>
+            </button>
+            <button onclick="generarOT(${index})" title="Generar OT" class="btn-info" style="padding: 0.5rem; margin: 0.25rem;">
+              <i class="fas fa-clipboard"></i>
+            </button>
+          </td>
+        `;
+        
+        for (let semana = 1; semana <= 48; semana++) {
+          const activa = item.semanas.includes(semana);
+          const clase = activa ? 'activa-calendario' : '';
+          const texto = activa ? item.frecuencia : '';
+          fila.innerHTML += `<td class="${clase}">${texto}</td>`;
+        }
+        tbody.appendChild(fila);
+      });
+    }
+
+    function editarTarea(index) {
+      const tarea = tareas[index];
+      document.getElementById("equipo-select").value = tarea.equipoCodigo;
+      document.getElementById("tarea").value = tarea.tarea;
+      document.getElementById("frecuencia").value = tarea.frecuencia;
+      document.getElementById("tipo-mantenimiento").value = tarea.tipoMantenimiento || 'PREVENTIVO';
+      
+      tareas.splice(index, 1);
+      guardarTareas();
+      actualizarTablaCalendario();
+    }
+
+    function eliminarTarea(index) {
+      if (confirm("¿Estás seguro de que deseas eliminar esta tarea?")) {
+        tareas.splice(index, 1);
+        guardarTareas();
+        actualizarTablaCalendario();
+        actualizarResumen();
+      }
+    }
+
+    function generarOT(index) {
+      const tarea = tareas[index];
+      const equipo = equipos.find(e => e.codigo === tarea.equipoCodigo);
+      
+      if (!equipo) {
+        alert('Error: No se encontró el equipo asociado a esta tarea');
+        return;
+      }
+      
+      const nuevaOT = {
+        id: ordenesTrabajoCounter++,
+        numero: `OT/N° ${ordenesTrabajoCounter.toString().padStart(4, '0')}`,
+        estado: 'Abierta',
+        revision: 0,
+        codigo: `REG-${ordenesTrabajoCounter.toString().padStart(2, '0')}`,
+        fechaSolicitud: new Date().toLocaleDateString('es-ES'),
+        horaSolicitud: new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'}),
+        descripcionArea: tarea.tarea,
+        area: equipo.area,
+        equipo: equipo.nombre,
+        codigoEquipo: equipo.codigo,
+        estadoEquipo: equipo.estado,
+        criticidadEquipo: equipo.criticidad,
+        tipoMantenimiento: tarea.tipoMantenimiento || 'PREVENTIVO',
+        especialidadRequerida: 'ELECTRICO',
+        nombreSolicitante: '',
+        cargoSolicitante: '',
+        areaSolicitante: '',
+        tareaDesarrollar: tarea.tarea,
+        encargadoMantenimiento: '',
+        telefono: '',
+        clasificacion: '',
+        fechaInicio: '',
+        horaInicio: '',
+        fechaFin: '',
+        horaFin: '',
+        tiempoTotal: 0,
+        diagnosticoTecnico: '',
+        realizadoPor: '',
+        aprobadoPor: '',
+        actividades: [],
+        fechaCreacion: new Date().toISOString(),
+        completada: false
+      };
+      
+      ordenesTrabajo.push(nuevaOT);
+      guardarOrdenesTrabajo();
+      
+      // Cambiar a la sección de órdenes de trabajo
+      mostrarSeccion('ots');
+      mostrarOrdenesTrabajo();
+      actualizarResumen();
+      
+      alert(`Orden de trabajo ${nuevaOT.numero} creada exitosamente`);
+    }
+
+    // Funciones para órdenes de trabajo
+    function mostrarOrdenesTrabajo() {
+      const contenedor = document.getElementById('contenedor-ots');
+      contenedor.innerHTML = '';
+      
+      if (ordenesTrabajo.length === 0) {
+        contenedor.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> No hay órdenes de trabajo generadas.</p></div>';
+        return;
+      }
+      
+      ordenesTrabajo.forEach((ot, index) => {
+        const estadoClass = ot.completada ? 'estado-completada' : (ot.fechaInicio ? 'estado-en-proceso' : 'estado-abierta');
+        const estadoTexto = ot.completada ? 'Completada' : (ot.fechaInicio ? 'En Proceso' : 'Abierta');
+        
+        const otDiv = document.createElement('div');
+        otDiv.className = 'ot-container';
+        otDiv.innerHTML = `
+          <div class="ot-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div><i class="fas fa-building"></i> SEDESEM</div>
+              <div style="text-align: center;">
+                <i class="fas fa-clipboard-list"></i><br>
+                ORDEN DE TRABAJO<br>MANTENIMIENTO
+              </div>
+              <div style="text-align: right;">
+                <div>Revisión ${ot.revision}</div>
+                <div>Código: ${ot.codigo}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="ot-numero">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Estado de OT: <span class="${estadoClass}">${estadoTexto}</span></span>
+              <span>${ot.numero}</span>
+            </div>
+          </div>
+          
+          <div class="ot-form">
+            <div class="ot-section"><i class="fas fa-info-circle"></i> DATOS DE SOLICITUD</div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-tag"></i> Desc. Área:</label>
+                <input type="text" value="${ot.descripcionArea}" onchange="actualizarOT(${index}, 'descripcionArea', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-calendar"></i> Fecha de la solicitud:</label>
+                <input type="date" value="${convertirFecha(ot.fechaSolicitud)}" onchange="actualizarOT(${index}, 'fechaSolicitud', this.value)">
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-map-marker-alt"></i> Área:</label>
+                <input type="text" value="${ot.area}" onchange="actualizarOT(${index}, 'area', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-clock"></i> Hora de la solicitud:</label>
+                <input type="time" value="${convertirHora(ot.horaSolicitud)}" onchange="actualizarOT(${index}, 'horaSolicitud', this.value)">
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-cog"></i> Equipo:</label>
+                <input type="text" value="${ot.equipo}" onchange="actualizarOT(${index}, 'equipo', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-power-off"></i> Estado del equipo:</label>
+                <input type="text" value="${ot.estadoEquipo}" onchange="actualizarOT(${index}, 'estadoEquipo', this.value)">
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-barcode"></i> Código Equipo:</label>
+                <input type="text" value="${ot.codigoEquipo}" readonly style="background-color: #f8f9fa;">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-exclamation-triangle"></i> Criticidad del equipo:</label>
+                <select onchange="actualizarOT(${index}, 'criticidadEquipo', this.value)">
+                  <option value="">Seleccionar...</option>
+                  <option value="ALTA" ${ot.criticidadEquipo === 'ALTA' ? 'selected' : ''}>ALTA</option>
+                  <option value="MEDIA" ${ot.criticidadEquipo === 'MEDIA' ? 'selected' : ''}>MEDIA</option>
+                  <option value="BAJA" ${ot.criticidadEquipo === 'BAJA' ? 'selected' : ''}>BAJA</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-user"></i> Nombre del solicitante:</label>
+                <input type="text" value="${ot.nombreSolicitante}" onchange="actualizarOT(${index}, 'nombreSolicitante', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-tools"></i> Tipo de mantenimiento:</label>
+                <select onchange="actualizarOT(${index}, 'tipoMantenimiento', this.value)">
+                  <option value="CORRECTIVO" ${ot.tipoMantenimiento === 'CORRECTIVO' ? 'selected' : ''}>CORRECTIVO</option>
+                  <option value="PREVENTIVO" ${ot.tipoMantenimiento === 'PREVENTIVO' ? 'selected' : ''}>PREVENTIVO</option>
+                  <option value="PREDICTIVO" ${ot.tipoMantenimiento === 'PREDICTIVO' ? 'selected' : ''}>PREDICTIVO</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-briefcase"></i> Cargo del solicitante:</label>
+                <input type="text" value="${ot.cargoSolicitante}" onchange="actualizarOT(${index}, 'cargoSolicitante', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-user-cog"></i> Especialidad requerida:</label>
+                <select onchange="actualizarOT(${index}, 'especialidadRequerida', this.value)">
+                  <option value="ELECTRICO" ${ot.especialidadRequerida === 'ELECTRICO' ? 'selected' : ''}>ELÉCTRICO</option>
+                  <option value="MECANICO" ${ot.especialidadRequerida === 'MECANICO' ? 'selected' : ''}>MECÁNICO</option>
+                  <option value="INSTRUMENTACION" ${ot.especialidadRequerida === 'INSTRUMENTACION' ? 'selected' : ''}>INSTRUMENTACIÓN</option>
+                  <option value="CIVIL" ${ot.especialidadRequerida === 'CIVIL' ? 'selected' : ''}>CIVIL</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-building"></i> Área del solicitante:</label>
+                <input type="text" value="${ot.areaSolicitante}" onchange="actualizarOT(${index}, 'areaSolicitante', this.value)">
+              </div>
+            </div>
+            
+            <div class="ot-section"><i class="fas fa-tasks"></i> TAREA A DESARROLLAR</div>
+            <div class="ot-row">
+              <div class="ot-field">
+                <textarea placeholder="Descripción detallada de la tarea..." onchange="actualizarOT(${index}, 'tareaDesarrollar', this.value)">${ot.tareaDesarrollar}</textarea>
+              </div>
+            </div>
+            
+            <div class="ot-section"><i class="fas fa-hammer"></i> DESARROLLO DEL TRABAJO</div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-user-tie"></i> Encargado de Mantenimiento:</label>
+                <input type="text" value="${ot.encargadoMantenimiento}" onchange="actualizarOT(${index}, 'encargadoMantenimiento', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-phone"></i> Tel/Cel:</label>
+                <input type="text" value="${ot.telefono}" onchange="actualizarOT(${index}, 'telefono', this.value)">
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-list"></i> Clasificación:</label>
+                <input type="text" value="${ot.clasificacion}" onchange="actualizarOT(${index}, 'clasificacion', this.value)">
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-play"></i> Fecha de inicio:</label>
+                <input type="date" value="${ot.fechaInicio}" onchange="actualizarOT(${index}, 'fechaInicio', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-clock"></i> Hora de inicio:</label>
+                <input type="time" value="${ot.horaInicio}" onchange="actualizarOT(${index}, 'horaInicio', this.value)">
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-stop"></i> Fecha de finalización:</label>
+                <input type="date" value="${ot.fechaFin}" onchange="actualizarOT(${index}, 'fechaFin', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-clock"></i> Hora de finalización:</label>
+                <input type="time" value="${ot.horaFin}" onchange="actualizarOT(${index}, 'horaFin', this.value)">
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-hourglass-half"></i> Tiempo total (horas):</label>
+                <input type="number" step="0.1" value="${ot.tiempoTotal}" readonly style="background-color: #f8f9fa;">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-check-circle"></i> ¿Trabajo completado exitosamente?</label>
+                <select onchange="actualizarOT(${index}, 'completada', this.value === 'true')">
+                  <option value="false" ${!ot.completada ? 'selected' : ''}>No</option>
+                  <option value="true" ${ot.completada ? 'selected' : ''}>Sí</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-stethoscope"></i> Diagnóstico técnico:</label>
+                <textarea placeholder="Diagnóstico técnico..." onchange="actualizarOT(${index}, 'diagnosticoTecnico', this.value)">${ot.diagnosticoTecnico}</textarea>
+              </div>
+            </div>
+            
+            <div class="ot-row">
+              <div class="ot-field">
+                <label><i class="fas fa-user-check"></i> Realizado por:</label>
+                <input type="text" value="${ot.realizadoPor}" onchange="actualizarOT(${index}, 'realizadoPor', this.value)">
+              </div>
+              <div class="ot-field">
+                <label><i class="fas fa-user-shield"></i> Aprobado por:</label>
+                <input type="text" value="${ot.aprobadoPor}" onchange="actualizarOT(${index}, 'aprobadoPor', this.value)">
+              </div>
+            </div>
+            
+            <table class="ot-table">
+              <thead>
+                <tr>
+                  <th><i class="fas fa-list"></i> Actividades desarrolladas</th>
+                  <th><i class="fas fa-user"></i> Técnico</th>
+                  <th><i class="fas fa-play"></i> Inicio</th>
+                  <th><i class="fas fa-stop"></i> Fin</th>
+                </tr>
+              </thead>
+              <tbody id="actividades-${index}">
+                ${ot.actividades.map((act, actIndex) => `
+                  <tr>
+                    <td><input type="text" value="${act.descripcion}" onchange="actualizarActividad(${index}, ${actIndex}, 'descripcion', this.value)"></td>
+                    <td><input type="text" value="${act.tecnico}" onchange="actualizarActividad(${index}, ${actIndex}, 'tecnico', this.value)"></td>
+                    <td><input type="datetime-local" value="${act.inicio}" onchange="actualizarActividad(${index}, ${actIndex}, 'inicio', this.value)"></td>
+                    <td><input type="datetime-local" value="${act.fin}" onchange="actualizarActividad(${index}, ${actIndex}, 'fin', this.value)"></td>
+                  </tr>
+                `).join('')}
+                <tr>
+                  <td><input type="text" placeholder="Nueva actividad..."></td>
+                  <td><input type="text" placeholder="Técnico..."></td>
+                  <td><input type="datetime-local"></td>
+                  <td><input type="datetime-local"></td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <button onclick="agregarActividad(${index})" style="margin-top: 1rem;">
+              <i class="fas fa-plus"></i> Agregar Actividad
+            </button>
+          </div>
+          
+          <div class="ot-actions">
+            <button class="btn-success" onclick="guardarOT(${index})">
+              <i class="fas fa-save"></i> Guardar
+            </button>
+            <button class="btn-warning" onclick="modificarOT(${index})">
+              <i class="fas fa-edit"></i> Modificar
+            </button>
+            <button class="btn-info" onclick="imprimirOT(${index})">
+              <i class="fas fa-print"></i> Imprimir
+            </button>
+            <button class="btn-danger" onclick="eliminarOT(${index})">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </div>
+        `;
+        contenedor.appendChild(otDiv);
+      });
+    }
+
+    function actualizarOT(index, campo, valor) {
+      ordenesTrabajo[index][campo] = valor;
+      
+      // Calcular tiempo total si se actualizan fechas
+      if (campo === 'fechaInicio' || campo === 'horaInicio' || campo === 'fechaFin' || campo === 'horaFin') {
+        calcularTiempoTotal(index);
+      }
+      
+      guardarOrdenesTrabajo();
+      
+      // Actualizar resumen si cambia el estado
+      if (campo === 'completada') {
+        actualizarResumen();
+        actualizarKPIs();
+      }
+    }
+
+    function calcularTiempoTotal(index) {
+      const ot = ordenesTrabajo[index];
+      
+      if (ot.fechaInicio && ot.horaInicio && ot.fechaFin && ot.horaFin) {
+        const inicio = new Date(`${ot.fechaInicio}T${ot.horaInicio}`);
+        const fin = new Date(`${ot.fechaFin}T${ot.horaFin}`);
+        
+        if (fin > inicio) {
+          const diferencia = fin - inicio;
+          const horas = diferencia / (1000 * 60 * 60);
+          ot.tiempoTotal = Math.round(horas * 10) / 10; // Redondear a 1 decimal
+          
+          // Actualizar el campo en la interfaz
+          const campoTiempo = document.querySelector(`input[value="${ot.tiempoTotal}"]`);
+          if (campoTiempo) {
+            campoTiempo.value = ot.tiempoTotal;
+          }
+        }
+      }
+    }
+
+    function actualizarActividad(otIndex, actIndex, campo, valor) {
+      ordenesTrabajo[otIndex].actividades[actIndex][campo] = valor;
+      guardarOrdenesTrabajo();
+    }
+
+    function agregarActividad(otIndex) {
+      const tabla = document.querySelector(`#actividades-${otIndex}`);
+      const ultimaFila = tabla.lastElementChild;
+      const inputs = ultimaFila.querySelectorAll('input');
+      
+      if (inputs[0].value.trim()) {
+        const nuevaActividad = {
+          descripcion: inputs[0].value,
+          tecnico: inputs[1].value,
+          inicio: inputs[2].value,
+          fin: inputs[3].value
+        };
+        
+        ordenesTrabajo[otIndex].actividades.push(nuevaActividad);
+        guardarOrdenesTrabajo();
+        mostrarOrdenesTrabajo();
+      }
+    }
+
+    function convertirFecha(fechaStr) {
+      if (!fechaStr) return '';
+      const partes = fechaStr.split('/');
+      if (partes.length === 3) {
+        return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+      }
+      return fechaStr;
+    }
+
+    function convertirHora(horaStr) {
+      if (!horaStr) return '';
+      return horaStr.length === 5 ? horaStr : horaStr.substring(0, 5);
+    }
+
+    function guardarOT(index) {
+      alert('Orden de trabajo guardada exitosamente');
+    }
+
+    function modificarOT(index) {
+      alert('Modo de modificación activado');
+    }
+
+    function imprimirOT(index) {
+      window.print();
+    }
+
+    function eliminarOT(index) {
+      if (confirm('¿Está seguro de eliminar esta orden de trabajo?')) {
+        ordenesTrabajo.splice(index, 1);
+        guardarOrdenesTrabajo();
+        mostrarOrdenesTrabajo();
+        actualizarResumen();
+        actualizarKPIs();
+      }
+    }
+
+    // Funciones de KPIs
+    function calcularMTTR(equipoCodigo = null) {
+      let otsCompletadas = ordenesTrabajo.filter(ot => ot.completada && ot.tiempoTotal > 0);
+      
+      if (equipoCodigo) {
+        otsCompletadas = otsCompletadas.filter(ot => ot.codigoEquipo === equipoCodigo);
+      }
+      
+      if (otsCompletadas.length === 0) return 0;
+      
+      const tiempoTotal = otsCompletadas.reduce((sum, ot) => sum + ot.tiempoTotal, 0);
+      return Math.round((tiempoTotal / otsCompletadas.length) * 10) / 10;
+    }
+
+    function calcularDisponibilidad(equipoCodigo = null) {
+      // Simplificado: asumimos 24h/día disponibles, restamos tiempo de mantenimiento
+      const diasPeriodo = 30; // Últimos 30 días
+      const horasDisponibles = diasPeriodo * 24;
+      
+      let otsCompletadas = ordenesTrabajo.filter(ot => ot.completada && ot.tiempoTotal > 0);
+      
+      if (equipoCodigo) {
+        otsCompletadas = otsCompletadas.filter(ot => ot.codigoEquipo === equipoCodigo);
+      }
+      
+      const tiempoMantenimiento = otsCompletadas.reduce((sum, ot) => sum + ot.tiempoTotal, 0);
+      const disponibilidad = ((horasDisponibles - tiempoMantenimiento) / horasDisponibles) * 100;
+      
+      return Math.max(0, Math.round(disponibilidad * 10) / 10);
+    }
+
+    function calcularCriticidad(equipoCodigo = null) {
+      let ots = ordenesTrabajo;
+      
+      if (equipoCodigo) {
+        ots = ots.filter(ot => ot.codigoEquipo === equipoCodigo);
+      }
+      
+      const otsCorrectivas = ots.filter(ot => ot.tipoMantenimiento === 'CORRECTIVO').length;
+      const otsTotal = ots.length;
+      
+      if (otsTotal === 0) return 0;
+      
+      return Math.round((otsCorrectivas / otsTotal) * 100);
+    }
+
+    function calcularEficiencia() {
+      const otsPreventivas = ordenesTrabajo.filter(ot => ot.tipoMantenimiento === 'PREVENTIVO').length;
+      const otsTotal = ordenesTrabajo.length;
+      
+      if (otsTotal === 0) return 0;
+      
+      return Math.round((otsPreventivas / otsTotal) * 100);
+    }
+
+    function actualizarKPIs() {
+      // Actualizar selects primero
+      actualizarSelectEquipos();
+      
+      // KPIs generales
+      document.getElementById('mttr-value').textContent = calcularMTTR() + 'h';
+      document.getElementById('disponibilidad-value').textContent = calcularDisponibilidad() + '%';
+      document.getElementById('criticidad-value').textContent = calcularCriticidad();
+      document.getElementById('eficiencia-value').textContent = calcularEficiencia() + '%';
+      
+      // Tabla de KPIs por equipo
+      const tbody = document.getElementById('tbody-kpis-equipos');
+      tbody.innerHTML = '';
+      
+      if (equipos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #7f8c8d;">No hay equipos registrados</td></tr>';
+        return;
+      }
+      
+      equipos.forEach(equipo => {
+        const mttr = calcularMTTR(equipo.codigo);
+        const disponibilidad = calcularDisponibilidad(equipo.codigo);
+        const otsCompletadas = ordenesTrabajo.filter(ot => ot.codigoEquipo === equipo.codigo && ot.completada).length;
+        const criticidad = calcularCriticidad(equipo.codigo);
+        
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td><strong>${equipo.codigo}</strong></td>
+          <td>${equipo.nombre}</td>
+          <td>${mttr}</td>
+          <td>${disponibilidad}</td>
+          <td>${otsCompletadas}</td>
+          <td><span style="background-color: ${equipo.criticidad === 'ALTA' ? '#ef4444' : equipo.criticidad === 'MEDIA' ? '#f97316' : '#22c55e'}; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${equipo.criticidad}</span></td>
+        `;
+        tbody.appendChild(fila);
+      });
+    }
+
+    // Función de búsqueda
+    function buscarEquipo() {
+      const termino = document.getElementById('buscador-equipo').value.toLowerCase().trim();
+      const contenedor = document.getElementById('detalle-equipo');
+      
+      if (!termino) {
+        contenedor.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> Ingrese un código o nombre de equipo para buscar.</p></div>';
+        return;
+      }
+      
+      const equipoEncontrado = equipos.find(equipo => 
+        equipo.codigo.toLowerCase().includes(termino) || 
+        equipo.nombre.toLowerCase().includes(termino)
+      );
+      
+      if (!equipoEncontrado) {
+        contenedor.innerHTML = '<div class="form-container"><p><i class="fas fa-exclamation-circle"></i> No se encontró ningún equipo con ese código o nombre.</p></div>';
+        return;
+      }
+      
+      // Mostrar detalles del equipo
+      const tareasEquipo = tareas.filter(t => t.equipoCodigo === equipoEncontrado.codigo);
+      const otsEquipo = ordenesTrabajo.filter(ot => ot.codigoEquipo === equipoEncontrado.codigo);
+      
+      contenedor.innerHTML = `
+        <div class="equipo-card">
+          <div class="equipo-header">
+            <h3><i class="fas fa-search"></i> Resultado de Búsqueda: ${equipoEncontrado.nombre}</h3>
+            <div class="equipo-codigo">${equipoEncontrado.codigo}</div>
+          </div>
+          <div class="equipo-info">
+            <div class="info-field">
+              <label><i class="fas fa-layer-group"></i> Tipo:</label>
+              <span>${equipoEncontrado.tipo}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-industry"></i> Marca:</label>
+              <span>${equipoEncontrado.marca}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-barcode"></i> Modelo:</label>
+              <span>${equipoEncontrado.modelo || 'N/A'}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-map-marker-alt"></i> Área:</label>
+              <span>${equipoEncontrado.area}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-exclamation-triangle"></i> Criticidad:</label>
+              <span style="background-color: ${equipoEncontrado.criticidad === 'ALTA' ? '#ef4444' : equipoEncontrado.criticidad === 'MEDIA' ? '#f97316' : '#22c55e'}; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${equipoEncontrado.criticidad}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-power-off"></i> Estado:</label>
+              <span>${equipoEncontrado.estado}</span>
+            </div>
+          </div>
+          
+          <div style="padding: 0 2rem;">
+            <h4><i class="fas fa-chart-bar"></i> Estadísticas del Equipo</h4>
+            <div class="equipo-info">
+              <div class="info-field">
+                <label><i class="fas fa-calendar-check"></i> Tareas Programadas:</label>
+                <span>${tareasEquipo.length}</span>
+              </div>
+              <div class="info-field">
+                <label><i class="fas fa-clipboard-list"></i> OT Generadas:</label>
+                <span>${otsEquipo.length}</span>
+              </div>
+              <div class="info-field">
+                <label><i class="fas fa-check-circle"></i> OT Completadas:</label>
+                <span>${otsEquipo.filter(ot => ot.completada).length}</span>
+              </div>
+              <div class="info-field">
+                <label><i class="fas fa-clock"></i> MTTR:</label>
+                <span>${calcularMTTR(equipoEncontrado.codigo)}h</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Funciones de respaldo
+    function crearBackup() {
+      const backup = {
+        fecha: new Date().toISOString(),
+        version: '1.0',
+        equipos: equipos,
+        tareas: tareas,
+        ordenesTrabajo: ordenesTrabajo,
+        contadores: {
+          equipoCounter: equipoCounter,
+          ordenesTrabajoCounter: ordenesTrabajoCounter
+        }
+      };
+      
+      const dataStr = JSON.stringify(backup, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `backup_mantenimiento_${new Date().toISOString().split('T')[0]}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      alert('✅ Backup creado exitosamente');
+    }
+
+    function importarBackup() {
+      document.getElementById('file-backup').click();
+    }
+
+    function procesarBackup(input) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const backup = JSON.parse(e.target.result);
+          
+          if (confirm('¿Está seguro de importar este backup? Se sobrescribirán todos los datos actuales.')) {
+            equipos = backup.equipos || [];
+            tareas = backup.tareas || [];
+            ordenesTrabajo = backup.ordenesTrabajo || [];
+            
+            if (backup.contadores) {
+              equipoCounter = backup.contadores.equipoCounter || 1;
+              ordenesTrabajoCounter = backup.contadores.ordenesTrabajoCounter || 1;
+            }
+            
+            // Guardar todo
+            guardarEquipos();
+            guardarTareas();
+            guardarOrdenesTrabajo();
+            
+            // Actualizar vistas
+            mostrarEquipos();
+            actualizarSelectEquipos();
+            actualizarTablaCalendario();
+            mostrarOrdenesTrabajo();
+            actualizarResumen();
+            actualizarKPIs();
+            
+            alert('✅ Backup importado exitosamente');
+          }
+        } catch (error) {
+          alert('❌ Error al procesar el archivo de backup: ' + error.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Función para actualizar resumen
+    function actualizarResumen() {
+      document.getElementById('total-equipos').textContent = equipos.length;
+      document.getElementById('ot-abiertas').textContent = ordenesTrabajo.filter(ot => !ot.completada).length;
+      document.getElementById('ot-completadas').textContent = ordenesTrabajo.filter(ot => ot.completada).length;
+      document.getElementById('tareas-programadas').textContent = tareas.length;
+      
+      // Equipos críticos
+      const equiposCriticos = equipos.filter(e => e.criticidad === 'ALTA');
+      const contenedorCriticos = document.getElementById('equipos-criticos');
+      
+      if (equiposCriticos.length === 0) {
+        contenedorCriticos.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> No hay equipos con criticidad alta registrados.</p></div>';
+      } else {
+        contenedorCriticos.innerHTML = `
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-barcode"></i> Código</th>
+                <th><i class="fas fa-cog"></i> Equipo</th>
+                <th><i class="fas fa-map-marker-alt"></i> Área</th>
+                <th><i class="fas fa-power-off"></i> Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${equiposCriticos.map(equipo => `
+                <tr>
+                  <td><strong>${equipo.codigo}</strong></td>
+                  <td>${equipo.nombre}</td>
+                  <td>${equipo.area}</td>
+                  <td>${equipo.estado}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+      
+      // Próximas tareas (simulado - aquí podrías implementar lógica real de fechas)
+      const contenedorTareas = document.getElementById('proximas-tareas');
+      if (tareas.length === 0) {
+        contenedorTareas.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> No hay tareas programadas próximamente.</p></div>';
+      } else {
+        const proximasTareas = tareas.slice(0, 5); // Mostrar las primeras 5 tareas
+        contenedorTareas.innerHTML = `
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-barcode"></i> Código Equipo</th>
+                <th><i class="fas fa-tasks"></i> Tarea</th>
+                <th><i class="fas fa-sync"></i> Frecuencia</th>
+                <th><i class="fas fa-wrench"></i> Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${proximasTareas.map(tarea => {
+                const equipo = equipos.find(e => e.codigo === tarea.equipoCodigo);
+                return `
+                  <tr>
+                    <td><strong>${tarea.equipoCodigo}</strong></td>
+                    <td>${tarea.tarea}</td>
+                    <td>${tarea.frecuencia}</td>
+                    <td>${tarea.tipoMantenimiento}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+    }
+
+    // Variables para checklist
+    const CHECKLIST_KEY = "checklist_tareas";
+    const CHECKLIST_EJECUCIONES_KEY = "checklist_ejecuciones";
+    let tareasChecklist = [];
+    let ejecucionesChecklist = [];
+
+    function cargarTareasChecklist() {
+      const data = localStorage.getItem(CHECKLIST_KEY);
+      if (data) tareasChecklist = JSON.parse(data);
+    }
+
+    function guardarTareasChecklist() {
+      localStorage.setItem(CHECKLIST_KEY, JSON.stringify(tareasChecklist));
+    }
+
+    function cargarEjecucionesChecklist() {
+      const data = localStorage.getItem(CHECKLIST_EJECUCIONES_KEY);
+      if (data) ejecucionesChecklist = JSON.parse(data);
+    }
+
+    function guardarEjecucionesChecklist() {
+      localStorage.setItem(CHECKLIST_EJECUCIONES_KEY, JSON.stringify(ejecucionesChecklist));
+    }
+
+    // Funciones auxiliares para checklist
+    function actualizarSelectsChecklist() {
+      const selects = ['checklist-equipo-select', 'filtro-checklist-equipo'];
+      
+      selects.forEach(selectId => {
+        const select = document.getElementById(selectId);
+        if (select) {
+          const valorSeleccionado = select.value;
+          
+          // Limpiar opciones excepto la primera
+          while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+          }
+          
+          // Agregar equipos
+          equipos.forEach(equipo => {
+            const option = document.createElement('option');
+            option.value = equipo.codigo;
+            option.textContent = `${equipo.codigo} - ${equipo.nombre}`;
+            select.appendChild(option);
+          });
+          
+          if (valorSeleccionado) {
+            select.value = valorSeleccionado;
+          }
+        }
+      });
+    }
+
+    function mostrarTareasChecklist() {
+      const container = document.getElementById('lista-tareas-checklist');
+      
+      if (tareasChecklist.length === 0) {
+        container.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> No hay tareas de checklist configuradas.</p></div>';
+        return;
+      }
+      
+      container.innerHTML = '';
+      tareasChecklist.forEach((tarea, index) => {
+        const equipo = equipos.find(e => e.codigo === tarea.equipoCodigo);
+        const prioridadColor = {
+          'baja': '#22c55e',
+          'media': '#f97316', 
+          'alta': '#ef4444',
+          'critica': '#7c2d12'
+        };
+        
+        const tareaDiv = document.createElement('div');
+        tareaDiv.className = 'equipo-card';
+        tareaDiv.innerHTML = `
+          <div class="equipo-header">
+            <h3><i class="fas fa-clipboard-check"></i> ${tarea.descripcion}</h3>
+            <div class="equipo-codigo">${tarea.equipoCodigo}</div>
+          </div>
+          <div class="equipo-info">
+            <div class="info-field">
+              <label><i class="fas fa-cog"></i> Equipo:</label>
+              <span>${equipo ? equipo.nombre : 'Equipo no encontrado'}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-list"></i> Tipo:</label>
+              <span>${tarea.tipo}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-exclamation-triangle"></i> Prioridad:</label>
+              <span style="background-color: ${prioridadColor[tarea.prioridad]}; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${tarea.prioridad.toUpperCase()}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-clock"></i> Tiempo Estimado:</label>
+              <span>${tarea.tiempoEstimado} minutos</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-user"></i> Responsable:</label>
+              <span>${tarea.responsable || 'No especificado'}</span>
+            </div>
+            <div class="info-field" style="grid-column: 1 / -1;">
+              <label><i class="fas fa-comment"></i> Observaciones:</label>
+              <span>${tarea.observaciones || 'Sin observaciones'}</span>
+            </div>
+          </div>
+          <div style="margin-top: 1.5rem; padding: 0 2rem 2rem; text-align: right;">
+            <button onclick="editarTareaChecklist(${index})" class="btn-warning">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+            <button onclick="eliminarTareaChecklist(${index})" class="btn-danger">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </div>
+        `;
+        container.appendChild(tareaDiv);
+      });
+    }
+
+    function actualizarChecklistDiario() {
+      const fecha = document.getElementById('fecha-checklist').value;
+      const equipoFiltro = document.getElementById('filtro-checklist-equipo').value;
+      const container = document.getElementById('contenedor-checklist-diario');
+      
+      if (!fecha) {
+        container.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> Selecciona una fecha para ver el checklist diario.</p></div>';
+        return;
+      }
+      
+      // Filtrar tareas por equipo si se especifica
+      let tareasFiltradas = tareasChecklist;
+      if (equipoFiltro) {
+        tareasFiltradas = tareasChecklist.filter(t => t.equipoCodigo === equipoFiltro);
+      }
+      
+      if (tareasFiltradas.length === 0) {
+        container.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> No hay tareas de checklist para mostrar.</p></div>';
+        return;
+      }
+      
+      // Verificar ejecuciones existentes para esta fecha
+      const ejecucionesFecha = ejecucionesChecklist.filter(e => e.fecha === fecha);
+      
+      container.innerHTML = `
+        <div class="form-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3><i class="fas fa-calendar-day"></i> Checklist para ${new Date(fecha).toLocaleDateString('es-ES')}</h3>
+            <button onclick="completarTodoChecklist('${fecha}')" class="btn-success">
+              <i class="fas fa-check-double"></i> Marcar Todo Completado
+            </button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-check"></i> Estado</th>
+                <th><i class="fas fa-cog"></i> Equipo</th>
+                <th><i class="fas fa-tasks"></i> Tarea</th>
+                <th><i class="fas fa-list"></i> Tipo</th>
+                <th><i class="fas fa-exclamation-triangle"></i> Prioridad</th>
+                <th><i class="fas fa-clock"></i> Tiempo</th>
+                <th><i class="fas fa-cogs"></i> Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tareasFiltradas.map((tarea, index) => {
+                const equipo = equipos.find(e => e.codigo === tarea.equipoCodigo);
+                const ejecucion = ejecucionesFecha.find(e => e.tareaId === tarea.id);
+                const completada = ejecucion ? ejecucion.completada : false;
+                const horaEjecucion = ejecucion ? ejecucion.horaEjecucion : '';
+                
+                const prioridadColor = {
+                  'baja': '#22c55e',
+                  'media': '#f97316', 
+                  'alta': '#ef4444',
+                  'critica': '#7c2d12'
+                };
+                
+                return `
+                  <tr style="${completada ? 'background-color: #f0f9ff;' : ''}">
+                    <td>
+                      ${completada ? 
+                        `<span style="color: #22c55e; font-weight: bold;"><i class="fas fa-check-circle"></i> Completada</span>` : 
+                        `<span style="color: #ef4444; font-weight: bold;"><i class="fas fa-clock"></i> Pendiente</span>`
+                      }
+                    </td>
+                    <td><strong>${tarea.equipoCodigo}</strong><br><small>${equipo ? equipo.nombre : 'N/A'}</small></td>
+                    <td>${tarea.descripcion}</td>
+                    <td>${tarea.tipo}</td>
+                    <td><span style="background-color: ${prioridadColor[tarea.prioridad]}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;">${tarea.prioridad.toUpperCase()}</span></td>
+                    <td>${tarea.tiempoEstimado} min</td>
+                    <td>
+                      ${!completada ? 
+                        `<button onclick="completarTareaChecklist('${tarea.id}', '${fecha}')" class="btn-success" style="padding: 0.5rem; margin: 0.25rem;">
+                          <i class="fas fa-check"></i>
+                        </button>` :
+                        `<button onclick="desmarcarTareaChecklist('${tarea.id}', '${fecha}')" class="btn-warning" style="padding: 0.5rem; margin: 0.25rem;">
+                          <i class="fas fa-undo"></i>
+                        </button>`
+                      }
+                      <button onclick="verDetallesTarea('${tarea.id}')" class="btn-info" style="padding: 0.5rem; margin: 0.25rem;">
+                        <i class="fas fa-info"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <strong>Resumen del día:</strong> 
+            ${ejecucionesFecha.filter(e => e.completada).length} de ${tareasFiltradas.length} tareas completadas
+            ${ejecucionesFecha.length > 0 ? 
+              ` - Tiempo total: ${ejecucionesFecha.reduce((sum, e) => sum + (e.tiempoReal || 0), 0)} minutos` : ''
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function completarTareaChecklist(tareaId, fecha) {
+      const tarea = tareasChecklist.find(t => t.id === tareaId);
+      if (!tarea) return;
+      
+      const observaciones = prompt(`Completando: ${tarea.descripcion}\n\n¿Alguna observación adicional?`) || '';
+      const tiempoReal = parseInt(prompt(`Tiempo real empleado (minutos):`, tarea.tiempoEstimado) || tarea.tiempoEstimado);
+      
+      const ejecucion = {
+        id: Date.now(),
+        tareaId: tareaId,
+        fecha: fecha,
+        horaEjecucion: new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'}),
+        completada: true,
+        observaciones: observaciones,
+        tiempoReal: tiempoReal,
+        fechaCreacion: new Date().toISOString()
+      };
+      
+      // Remover ejecución anterior si existe
+      ejecucionesChecklist = ejecucionesChecklist.filter(e => !(e.tareaId === tareaId && e.fecha === fecha));
+      ejecucionesChecklist.push(ejecucion);
+      
+      guardarEjecucionesChecklist();
+      actualizarChecklistDiario();
+      
+      alert(`✅ Tarea completada exitosamente`);
+    }
+
+    function desmarcarTareaChecklist(tareaId, fecha) {
+      if (confirm('¿Está seguro de desmarcar esta tarea como no completada?')) {
+        ejecucionesChecklist = ejecucionesChecklist.filter(e => !(e.tareaId === tareaId && e.fecha === fecha));
+        guardarEjecucionesChecklist();
+        actualizarChecklistDiario();
+      }
+    }
+
+    function completarTodoChecklist(fecha) {
+      if (confirm(`¿Marcar todas las tareas como completadas para ${new Date(fecha).toLocaleDateString('es-ES')}?`)) {
+        const equipoFiltro = document.getElementById('filtro-checklist-equipo').value;
+        let tareasFiltradas = tareasChecklist;
+        if (equipoFiltro) {
+          tareasFiltradas = tareasChecklist.filter(t => t.equipoCodigo === equipoFiltro);
+        }
+        
+        tareasFiltradas.forEach(tarea => {
+          const ejecucionExiste = ejecucionesChecklist.find(e => e.tareaId === tarea.id && e.fecha === fecha);
+          if (!ejecucionExiste) {
+            const ejecucion = {
+              id: Date.now() + Math.random(),
+              tareaId: tarea.id,
+              fecha: fecha,
+              horaEjecucion: new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'}),
+              completada: true,
+              observaciones: 'Completada en lote',
+              tiempoReal: tarea.tiempoEstimado,
+              fechaCreacion: new Date().toISOString()
+            };
+            ejecucionesChecklist.push(ejecucion);
+          }
+        });
+        
+        guardarEjecucionesChecklist();
+        actualizarChecklistDiario();
+        alert('✅ Todas las tareas marcadas como completadas');
+      }
+    }
+
+    function verDetallesTarea(tareaId) {
+      const tarea = tareasChecklist.find(t => t.id === tareaId);
+      if (tarea) {
+        const equipo = equipos.find(e => e.codigo === tarea.equipoCodigo);
+        alert(`📋 DETALLES DE LA TAREA\n\n` +
+              `Equipo: ${tarea.equipoCodigo} - ${equipo ? equipo.nombre : 'N/A'}\n` +
+              `Tarea: ${tarea.descripcion}\n` +
+              `Tipo: ${tarea.tipo}\n` +
+              `Prioridad: ${tarea.prioridad}\n` +
+              `Tiempo estimado: ${tarea.tiempoEstimado} minutos\n` +
+              `Responsable: ${tarea.responsable || 'No especificado'}\n` +
+              `Observaciones: ${tarea.observaciones || 'Sin observaciones'}`);
+      }
+    }
+
+    function editarTareaChecklist(index) {
+      const tarea = tareasChecklist[index];
+      
+      // Llenar formulario con datos de la tarea
+      document.getElementById('checklist-equipo-select').value = tarea.equipoCodigo;
+      document.getElementById('checklist-tarea').value = tarea.descripcion;
+      document.getElementById('checklist-tipo').value = tarea.tipo;
+      document.getElementById('checklist-prioridad').value = tarea.prioridad;
+      document.getElementById('checklist-tiempo').value = tarea.tiempoEstimado;
+      document.getElementById('checklist-responsable').value = tarea.responsable || '';
+      document.getElementById('checklist-observaciones').value = tarea.observaciones || '';
+      
+      // Eliminar tarea de la lista (se volverá a agregar al enviar)
+      tareasChecklist.splice(index, 1);
+      guardarTareasChecklist();
+      mostrarTareasChecklist();
+      
+      // Scroll al formulario
+      document.getElementById('formulario-checklist').scrollIntoView({behavior: 'smooth'});
+      
+      alert('Tarea cargada en el formulario para edición');
+    }
+
+    function eliminarTareaChecklist(index) {
+      if (confirm('¿Está seguro de eliminar esta tarea del checklist? También se eliminarán todas las ejecuciones asociadas.')) {
+        const tarea = tareasChecklist[index];
+        
+        // Eliminar tarea
+        tareasChecklist.splice(index, 1);
+        
+        // Eliminar ejecuciones asociadas
+        ejecucionesChecklist = ejecucionesChecklist.filter(e => e.tareaId !== tarea.id);
+        
+        // Guardar cambios
+        guardarTareasChecklist();
+        guardarEjecucionesChecklist();
+        
+        // Actualizar vista
+        mostrarTareasChecklist();
+        
+        alert('Tarea eliminada exitosamente');
+      }
+    }
+
+    function actualizarHistorialChecklist() {
+      const periodo = parseInt(document.getElementById('periodo-historial').value);
+      const container = document.getElementById('historial-checklist-tabla');
+      
+      // Filtrar ejecuciones por período
+      const fechaLimite = new Date();
+      fechaLimite.setDate(fechaLimite.getDate() - periodo);
+      
+      const ejecucionesPeriodo = ejecucionesChecklist.filter(e => {
+        const fechaEjecucion = new Date(e.fecha);
+        return fechaEjecucion >= fechaLimite;
+      });
+      
+      if (ejecucionesPeriodo.length === 0) {
+        container.innerHTML = '<div class="form-container"><p><i class="fas fa-info-circle"></i> No hay ejecuciones registradas en el período seleccionado.</p></div>';
+        return;
+      }
+      
+      // Agrupar por fecha
+      const ejecutadasPorFecha = {};
+      ejecucionesPeriodo.forEach(e => {
+        if (!ejecutadasPorFecha[e.fecha]) {
+          ejecutadasPorFecha[e.fecha] = [];
+        }
+        ejecutadasPorFecha[e.fecha].push(e);
+      });
+      
+      container.innerHTML = `
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><i class="fas fa-calendar"></i> Fecha</th>
+              <th><i class="fas fa-tasks"></i> Tareas Completadas</th>
+              <th><i class="fas fa-clock"></i> Tiempo Total</th>
+              <th><i class="fas fa-percentage"></i> Cumplimiento</th>
+              <th><i class="fas fa-info"></i> Detalles</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.keys(ejecutadasPorFecha).sort().reverse().map(fecha => {
+              const ejecucionesFecha = ejecutadasPorFecha[fecha];
+              const completadas = ejecucionesFecha.filter(e => e.completada).length;
+              const tiempoTotal = ejecucionesFecha.reduce((sum, e) => sum + (e.tiempoReal || 0), 0);
+              const totalTareasFecha = tareasChecklist.length; // Simplificado
+              const porcentajeCumplimiento = totalTareasFecha > 0 ? Math.round((completadas / totalTareasFecha) * 100) : 0;
+              
+              return `
+                <tr>
+                  <td><strong>${new Date(fecha).toLocaleDateString('es-ES')}</strong></td>
+                  <td>${completadas} de ${totalTareasFecha}</td>
+                  <td>${tiempoTotal} minutos</td>
+                  <td>
+                    <span style="color: ${porcentajeCumplimiento >= 80 ? '#22c55e' : porcentajeCumplimiento >= 60 ? '#f97316' : '#ef4444'}; font-weight: bold;">
+                      ${porcentajeCumplimiento}%
+                    </span>
+                  </td>
+                  <td>
+                    <button onclick="verDetallesFecha('${fecha}')" class="btn-info" style="padding: 0.5rem;">
+                      <i class="fas fa-eye"></i> Ver
+                    </button>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function verDetallesFecha(fecha) {
+      const ejecucionesFecha = ejecucionesChecklist.filter(e => e.fecha === fecha);
+      let detalles = `📊 REPORTE DEL ${new Date(fecha).toLocaleDateString('es-ES')}\n\n`;
+      
+      ejecucionesFecha.forEach(e => {
+        const tarea = tareasChecklist.find(t => t.id === e.tareaId);
+        const equipo = equipos.find(eq => eq.codigo === tarea?.equipoCodigo);
+        
+        detalles += `✅ ${tarea?.descripcion || 'Tarea no encontrada'}\n`;
+        detalles += `   Equipo: ${tarea?.equipoCodigo} - ${equipo?.nombre || 'N/A'}\n`;
+        detalles += `   Hora: ${e.horaEjecucion}\n`;
+        detalles += `   Tiempo: ${e.tiempoReal} min\n`;
+        if (e.observaciones) detalles += `   Obs: ${e.observaciones}\n`;
+        detalles += `\n`;
+      });
+      
+      alert(detalles);
+    }
+
+    function actualizarInfoBackup() {
+      const info = document.getElementById('historial-backup');
+      const totalEquipos = equipos.length;
+      const totalTareas = tareas.length;
+      const totalOT = ordenesTrabajo.length;
+      const fechaUltimoBackup = localStorage.getItem('ultimo_backup') || 'Nunca';
+      
+      info.innerHTML = `
+        <div class="form-container">
+          <h2><i class="fas fa-info-circle"></i> Información del Sistema</h2>
+          <div class="equipo-info">
+            <div class="info-field">
+              <label><i class="fas fa-cogs"></i> Total de Equipos:</label>
+              <span>${totalEquipos}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-calendar-check"></i> Total de Tareas:</label>
+              <span>${totalTareas}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-clipboard-list"></i> Total de OT:</label>
+              <span>${totalOT}</span>
+            </div>
+            <div class="info-field">
+              <label><i class="fas fa-clock"></i> Último Backup:</label>
+              <span>${fechaUltimoBackup}</span>
+            </div>
+          </div>
+          <p><i class="fas fa-database"></i> Los datos se guardan automáticamente en el navegador (localStorage).</p>
+          <p><i class="fas fa-shield-alt"></i> Se recomienda crear backups periódicos para evitar pérdida de información.</p>
+        </div>
+      `;
+    }
+
+    // Inicialización del sistema
+    function inicializarSistema() {
+      // Cargar datos
+      cargarEquipos();
+      cargarTareas();
+      cargarOrdenesTrabajo();
+      cargarTareasChecklist();
+      cargarEjecucionesChecklist();
+      
+      // Actualizar vistas
+      actualizarSelectEquipos();
+      actualizarTablaCalendario();
+      actualizarResumen();
+      actualizarKPIs();
+      
+      // Marcar primer elemento del menú como activo
+      document.querySelector('.sidebar ul li').classList.add('active');
+    }
+
+    // Event listeners principales
+    document.addEventListener("DOMContentLoaded", () => {
+      // Inicializar sistema
+      inicializarSistema();
+      
+      // Event listener para formulario de equipos
+      document.getElementById("formulario-equipo").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const nuevoEquipo = {
+          id: equipoCounter,
+          codigo: generarCodigoEquipo(document.getElementById("tipo-equipo").value, document.getElementById("nombre-equipo").value),
+          nombre: document.getElementById("nombre-equipo").value.trim(),
+          tipo: document.getElementById("tipo-equipo").value,
+          marca: document.getElementById("marca-equipo").value.trim(),
+          modelo: document.getElementById("modelo-equipo").value.trim(),
+          serie: document.getElementById("serie-equipo").value.trim(),
+          año: document.getElementById("año-equipo").value,
+          area: document.getElementById("area-equipo").value.trim(),
+          criticidad: document.getElementById("criticidad-equipo").value,
+          potencia: document.getElementById("potencia-equipo").value.trim(),
+          estado: document.getElementById("estado-equipo").value,
+          observaciones: document.getElementById("observaciones-equipo").value.trim(),
+          fechaCreacion: new Date().toISOString()
+        };
+        
+        equipos.push(nuevoEquipo);
+        equipoCounter++;
+        
+        guardarEquipos();
+        mostrarEquipos();
+        actualizarSelectEquipos();
+        actualizarResumen();
+        
+        e.target.reset();
+        alert(`✅ Equipo ${nuevoEquipo.codigo} registrado exitosamente`);
+      });
+
+      // Event listener para formulario de tareas
+      document.getElementById("formulario-tarea").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const equipoCodigo = document.getElementById("equipo-select").value;
+        const tarea = document.getElementById("tarea").value.trim();
+        const frecuencia = document.getElementById("frecuencia").value;
+        const tipoMantenimiento = document.getElementById("tipo-mantenimiento").value;
+        
+        if (!equipoCodigo || !tarea || !frecuencia) {
+          alert("❌ Por favor, completa todos los campos obligatorios.");
+          return;
+        }
+        
+        const semanas = semanasPorFrecuencia(frecuencia);
+        const nuevaTarea = {
+          equipoCodigo,
+          tarea,
+          frecuencia,
+          tipoMantenimiento,
+          semanas,
+          fechaCreacion: new Date().toISOString()
+        };
+        
+        tareas.push(nuevaTarea);
+        guardarTareas();
+        actualizarTablaCalendario();
+        actualizarResumen();
+        
+        e.target.reset();
+        alert("✅ Tarea programada exitosamente en el calendario.");
+      });
+
+      // Event listener para formulario de checklist
+      document.getElementById("formulario-checklist").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const equipoCodigo = document.getElementById("checklist-equipo-select").value;
+        const descripcion = document.getElementById("checklist-tarea").value.trim();
+        const tipo = document.getElementById("checklist-tipo").value;
+        const prioridad = document.getElementById("checklist-prioridad").value;
+        const tiempoEstimado = parseInt(document.getElementById("checklist-tiempo").value);
+        const responsable = document.getElementById("checklist-responsable").value.trim();
+        const observaciones = document.getElementById("checklist-observaciones").value.trim();
+        
+        if (!equipoCodigo || !descripcion || !tipo) {
+          alert("❌ Por favor, completa todos los campos obligatorios.");
+          return;
+        }
+        
+        const nuevaTareaChecklist = {
+          id: Date.now().toString(),
+          equipoCodigo,
+          descripcion,
+          tipo,
+          prioridad,
+          tiempoEstimado,
+          responsable,
+          observaciones,
+          fechaCreacion: new Date().toISOString()
+        };
+        
+        tareasChecklist.push(nuevaTareaChecklist);
+        guardarTareasChecklist();
+        mostrarTareasChecklist();
+        actualizarSelectsChecklist();
+        
+        e.target.reset();
+        alert(`✅ Tarea de checklist agregada exitosamente para el equipo ${equipoCodigo}`);
+      });
+
+      // Event listener para enter en buscador
+      document.getElementById('buscador-equipo').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          buscarEquipo();
+        }
+      });
+      
+      // Actualizar información de backup cada vez que se guarden datos
+      const originalGuardarEquipos = guardarEquipos;
+      guardarEquipos = function() {
+        originalGuardarEquipos();
+        localStorage.setItem('ultimo_backup', new Date().toLocaleString());
+      };
+    });
+
+    // Función para cambio de tema (futuro)
+    function toggleTheme() {
+      // Placeholder para implementación futura de tema oscuro
+      console.log('Cambio de tema - Función en desarrollo');
+    }
+
+    // Animaciones adicionales
+    function animarElemento(elemento, animacion = 'fadeIn') {
+      elemento.style.animation = `${animacion} 0.5s ease-out`;
+      setTimeout(() => {
+        elemento.style.animation = '';
+      }, 500);
+    }
+
+    // Función para mostrar notificaciones tipo toast (futuro)
+    function mostrarNotificacion(mensaje, tipo = 'info') {
+      // Placeholder para sistema de notificaciones
+      console.log(`Notificación ${tipo}: ${mensaje}`);
+    }
+    // ============================================
+    // INTEGRACIÓN CON BOT DE TELEGRAM
+    // ============================================
+
+    const API_BASE_URL = 'http://localhost:5000/api';
+    let botStatusInterval = null;
+
+    // Verificar estado del bot
+    async function checkBotStatus() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/bot/status`);
+        const status = await response.json();
+        updateBotStatusDisplay(status);
+      } catch (error) {
+        console.error('Error verificando estado del bot:', error);
+        updateBotStatusDisplay({
+          is_running: false,
+          status: 'api_offline',
+          error: 'API no disponible'
+        });
+      }
+    }
+
+    // Actualizar display del estado
+    function updateBotStatusDisplay(status) {
+      const btn = document.getElementById('btn-bot-toggle');
+      const statusText = document.getElementById('bot-toggle-text');
+      const statusContent = document.getElementById('bot-status-content');
+      
+      if (status.is_running) {
+        btn.style.backgroundColor = '#e74c3c';
+        statusText.innerHTML = '⏹️ Detener Bot';
+        
+        statusContent.innerHTML = `
+          <p><strong>✅ Estado:</strong> <span style="color: green;">EJECUTÁNDOSE</span></p>
+          <p><strong>⏱️ Tiempo activo:</strong> ${status.uptime || 'Calculando...'}</p>
+          <p><strong>🆔 PID:</strong> ${status.pid || 'N/A'}</p>
+          <p><strong>📋 Checklists completados:</strong> ${status.stats?.checklists_completados || 0}</p>
+          <p><strong>📸 Fotos guardadas:</strong> ${status.stats?.fotos_guardadas || 0}</p>
+        `;
+      } else {
+        btn.style.backgroundColor = '#27ae60';
+        statusText.innerHTML = '▶️ Iniciar Bot';
+        
+        const statusMessage = status.status === 'api_offline' ? 
+          '❌ API no disponible' : '⏸️ Bot detenido';
+        
+        statusContent.innerHTML = `
+          <p><strong>❌ Estado:</strong> <span style="color: red;">${statusMessage}</span></p>
+          ${status.error ? `<p style="color: red;">Error: ${status.error}</p>` : ''}
+        `;
+      }
+    }
+
+    // Controlar bot (iniciar/detener)
+    async function toggleTelegramBot() {
+      const btn = document.getElementById('btn-bot-toggle');
+      const statusText = document.getElementById('bot-toggle-text');
+      
+      btn.disabled = true;
+      statusText.textContent = 'Procesando...';
+      
+      try {
+        // Verificar estado actual
+        const statusResponse = await fetch(`${API_BASE_URL}/bot/status`);
+        const status = await statusResponse.json();
+        
+        let response;
+        if (status.is_running) {
+          response = await fetch(`${API_BASE_URL}/bot/stop`, { method: 'POST' });
+        } else {
+          response = await fetch(`${API_BASE_URL}/bot/start`, { method: 'POST' });
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert(`✅ ${result.message}`);
+          checkBotStatus();
+        } else {
+          alert(`❌ ${result.message}`);
+        }
+        
+      } catch (error) {
+        console.error('Error controlando bot:', error);
+        alert('❌ Error de conexión. Asegúrate de que la API esté ejecutándose en el puerto 5000.');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // Sincronizar datos con Telegram
+    async function syncToTelegram() {
+      if (!confirm('¿Deseas sincronizar todas las máquinas del dashboard con el bot de Telegram?')) {
+        return;
+      }
+      
+      try {
+        const dataToSync = {
+          equipos: equipos,
+          tareas: tareas,
+          timestamp: new Date().toISOString()
+        };
+        
+        const response = await fetch(`${API_BASE_URL}/sync/export-to-telegram`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataToSync)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert(`✅ ${result.message}`);
+          updateTelegramStats();
+        } else {
+          alert(`❌ ${result.message}`);
+        }
+        
+      } catch (error) {
+        console.error('Error sincronizando:', error);
+        alert('❌ Error de conexión durante la sincronización.');
+      }
+    }
+
+    // Actualizar estadísticas de Telegram
+    async function updateTelegramStats() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/telegram/stats`);
+        const stats = await response.json();
+        
+        const statsContent = document.getElementById('telegram-stats-content');
+        
+        statsContent.innerHTML = `
+          <p><strong>🏭 Máquinas en Telegram:</strong> ${stats.total_maquinas}</p>
+          <p><strong>📋 Checklists realizados:</strong> ${stats.total_checklists}</p>
+          <p><strong>📸 Fotos documentadas:</strong> ${stats.total_fotos}</p>
+          
+          ${stats.ultimo_checklist ? `
+            <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin-top: 10px;">
+              <h4>⏰ Último Checklist Realizado</h4>
+              <p><strong>Fecha:</strong> ${stats.ultimo_checklist.fecha}</p>
+              <p><strong>Operador:</strong> ${stats.ultimo_checklist.operador}</p>
+              <p><strong>Máquina:</strong> ${stats.ultimo_checklist.maquina}</p>
+              <p><strong>Resultado:</strong> ${stats.ultimo_checklist.resultado}</p>
+            </div>
+          ` : '<p style="color: #666;">No hay checklists realizados aún en Telegram.</p>'}
+        `;
+        
+      } catch (error) {
+        console.error('Error obteniendo estadísticas:', error);
+        document.getElementById('telegram-stats-content').innerHTML = 
+          '<p style="color: red;">❌ Error cargando estadísticas del bot.</p>';
+      }
+    }
+
+    // Descargar Excel del bot
+    async function downloadTelegramExcel() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/files/excel`);
+        
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `telegram_mantenimiento_${new Date().toISOString().split('T')[0]}.xlsx`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          
+          alert('✅ Archivo Excel del bot descargado exitosamente');
+        } else {
+          throw new Error('Archivo no encontrado');
+        }
+        
+      } catch (error) {
+        console.error('Error descargando Excel:', error);
+        alert('❌ No se pudo descargar el archivo Excel del bot.');
+      }
+    }
+
+    // Inicializar cuando se carga la página
+    document.addEventListener('DOMContentLoaded', function() {
+      // Verificar estado inicial del bot
+      checkBotStatus();
+      updateTelegramStats();
+      // Actualizar cada 10 segundos
+      botStatusInterval = setInterval(checkBotStatus, 10000);
+    });
+
+    // Limpiar interval al cerrar
+    window.addEventListener('beforeunload', function() {
+      if (botStatusInterval) {
+        clearInterval(botStatusInterval);
+      }
+    });
+  </script>
+</body>
+</html>
+      
